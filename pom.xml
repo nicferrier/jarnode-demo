@@ -8,11 +8,21 @@
   <version>1.0-SNAPSHOT</version>
   <name>jarnode</name>
   <url>http://maven.apache.org</url>
+
   <dependencies>
     <dependency>
       <groupId>uk.me.ferrier.nic</groupId>
       <artifactId>jarnode</artifactId>
       <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.me.ferrier.nic.node-dist</groupId>
+      <artifactId>node-linux-x64</artifactId>
+      <version>10.8.0</version>
+      <classifier>resources</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   
@@ -24,8 +34,34 @@
           <exclude>target</exclude>
         </excludes>
       </resource>
+      <resource>
+        <directory>${project.build.directory}/generated-resources</directory>
+        <filtering>true</filtering>
+      </resource>
     </resources>
+
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-shared-resources</id>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+             <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+             <includeArtifacIds>node-linux-x64</includeArtifacIds>
+             <includeGroupIds>uk.me.ferrier.nic.node-dist</includeGroupIds>
+             <excludeTransitive>true</excludeTransitive>
+             <!--use as much as needed to be specific...also scope,type,classifier etc-->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
